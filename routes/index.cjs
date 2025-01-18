@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const mqttController = require('../contollers/mqttController.js');
 
 // Test route to verify API is working
 router.get('/test', (req, res) => {
@@ -9,12 +10,10 @@ router.get('/test', (req, res) => {
     });
 });
 
-// Basic health check endpoint
-router.get('/health', (req, res) => {
-    res.json({
-        status: 'healthy',
-        timestamp: new Date().toISOString()
-    });
+// Route to upload sample data to Firestore
+router.get('/upload-sample-data', async (req, res) => {
+    await mqttController.uploadSampleData();
+    res.json({ status: 'success', message: 'Sample data uploaded to Firestore' });
 });
 
 // Catch-all route for undefined endpoints
