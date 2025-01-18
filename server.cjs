@@ -4,7 +4,7 @@ const admin = require("firebase-admin");
 const dotenv = require("dotenv");
 const serviceAccount = require("./asani-hackathon-firebase-adminsdk-fbsvc-af3d0b575b.json");
 const mqtt = require("mqtt");
-const mqttController = require("./contollers/mqttController.js");
+const mqttController = require("./contollers/mqttController.cjs");
 
 dotenv.config();
 
@@ -17,9 +17,7 @@ try {
     projectId: serviceAccount.project_id
   });
   
-  const db = admin.firestore();
-  
-  db.collection('test').get()
+  admin.firestore().collection('test').get()
     .then(() => {
       console.log('Firebase Admin connection successful');
       mqttController.uploadSampleData();
@@ -33,7 +31,8 @@ try {
   process.exit(1);
 }
 
-const firestore = admin.firestore();
+// Export the initialized admin instance
+module.exports = { admin };
 
 const mqttClient = mqtt.connect("mqtt://test.mosquitto.org:1883");
 
@@ -53,8 +52,6 @@ mqttClient.on("message", (topic, message) => {
   mqttController.handleIncomingMqttData(message.toString());
 });
 
-module.exports = { firestore };
-
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use(cors({ origin: "*" }));
@@ -72,3 +69,4 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     console.log(`http://localhost:${PORT}`);
 });
+
