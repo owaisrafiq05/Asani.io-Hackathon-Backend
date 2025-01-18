@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const mqttController = require('../contollers/mqttController.js');
+const deviceController = require('../contollers/deviceController.js');
 
 // Test route to verify API is working
 router.get('/test', (req, res) => {
@@ -16,6 +17,12 @@ router.get('/upload-sample-data', async (req, res) => {
     res.json({ status: 'success', message: 'Sample data uploaded to Firestore' });
 });
 
+
+// New approach for device routes
+router.post("/devices", deviceController.addDevice);
+router.get("/devices", deviceController.getAllDevices);
+
+
 // Catch-all route for undefined endpoints
 router.all('*', (req, res) => {
     res.status(404).json({
@@ -23,5 +30,6 @@ router.all('*', (req, res) => {
         message: 'Route not found'
     });
 });
+
 
 module.exports = router;
