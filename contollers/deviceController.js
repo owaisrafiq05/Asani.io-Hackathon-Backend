@@ -41,12 +41,18 @@ const getAllDevices = async (req, res) => {
     try {
         const snapshot = await collectionRef.get();
         const devices = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        res.status(200).json(devices);
+        
+        // Sending the response with the "message" tag
+        res.status(200).json({
+            message: "Fetched Successfully",
+            devices: devices
+        });
     } catch (error) {
         console.error("Error fetching devices:", error);
         res.status(500).json({ error: "Error fetching devices" });
     }
 };
+
 
 // Export the functions
 module.exports = {
