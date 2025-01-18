@@ -1,4 +1,4 @@
-import express from 'express';
+const express = require('express');
 const router = express.Router();
 
 // Test route to verify API is working
@@ -25,4 +25,4 @@ router.all('*', (req, res) => {
     });
 });
 
-export default router;
+module.exports = router;
