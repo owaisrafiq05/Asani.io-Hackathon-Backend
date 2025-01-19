@@ -16,9 +16,10 @@ const uploadDeviceData = async (deviceData) => {
 
 // Function to get all data from the mqttData collection
 const getAllMqttData = async (req, res) => {
+    const last = parseInt(req.query.last) || 10; // Default to 10 if not provided
     try {
         const mqttDataRef = admin.firestore().collection("mqttData");
-        const snapshot = await mqttDataRef.get();
+        const snapshot = await mqttDataRef.orderBy("createdAt", "desc").limit(last).get(); // Order by createdAt and limit results
 
         if (snapshot.empty) {
             return res.status(404).json({
@@ -44,6 +45,7 @@ const getAllMqttData = async (req, res) => {
         });
     }
 };
+
 
 
 // Function to add a new device

@@ -1,12 +1,10 @@
 [
   {
-    "Data": {
-      "SystemID": "XYZ123",
-      "FlowRate": 10.05,
-      "Energy": 519,
-      "Pressure": 14.85,
-      "Temperature": 38,
-      "Frequency": 49.99
-    }
+    "SystemID": "XYZ123",
+    "FlowRate": 10.05,
+    "Energy": 519,
+    "Pressure": 14.85,
+    "Temperature": 38,
+    "Frequency": 49.99
   }
 ]
