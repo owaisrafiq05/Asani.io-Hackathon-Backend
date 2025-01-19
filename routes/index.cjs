@@ -18,6 +18,9 @@ router.get('/upload-sample-data', async (req, res) => {
     res.json({ status: 'success', message: 'Sample data uploaded to Firestore' });
 });
 
+// Route to get all MQTT data
+router.get('/mqtt-data', deviceController.getAllMqttData);
+
 // New approach for device routes
 router.post("/devices", deviceController.addDevice);
 router.get("/devices", deviceController.getAllDevices);

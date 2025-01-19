@@ -14,6 +14,38 @@ const uploadDeviceData = async (deviceData) => {
     }
 };
 
+// Function to get all data from the mqttData collection
+const getAllMqttData = async (req, res) => {
+    try {
+        const mqttDataRef = admin.firestore().collection("mqttData");
+        const snapshot = await mqttDataRef.get();
+
+        if (snapshot.empty) {
+            return res.status(404).json({
+                status: 'error',
+                message: 'No MQTT data found'
+            });
+        }
+
+        const mqttDataList = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        res.json({
+            status: 'success',
+            data: mqttDataList
+        });
+    } catch (error) {
+        console.error("Error fetching MQTT data:", error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Failed to fetch MQTT data'
+        });
+    }
+};
+
+
 // Function to add a new device
 const addDevice = async (req, res) => {
     const { name, FlowRate, Energy, Pressure, Temperature, Frequency } = req.body;
@@ -57,5 +89,6 @@ const getAllDevices = async (req, res) => {
 // Export the functions
 module.exports = {
     addDevice,
-    getAllDevices
+    getAllDevices,
+    getAllMqttData
 };
