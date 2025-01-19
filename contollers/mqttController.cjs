@@ -22,7 +22,7 @@ const sendDataToApi = async (data) => {
         num_devices: numDevices,
         df: data
     };
-
+    console.log(payload);
     try {
         const response = await axios.post("https://jw9vbmcl-8000.inc1.devtunnels.ms/generate-response", payload);
         console.log("API response:", response.data);
@@ -57,6 +57,8 @@ const compareApiResponses = async (prevResponse, currentResponse) => {
 
             // Save the comparison result
             comparisonResults.push({
+                dataArr1: prevData,
+                dataArr2: currentData,
                 deviceId: i + 1,
                 status: currentData[i] === 1 ? "On" : "Off",
                 timestamp: new Date().toISOString() // Add a timestamp for the comparison
@@ -89,7 +91,7 @@ const startCollectingMqttData = () => {
     intervalId = setInterval(async () => {
         await sendDataToApi(dataBuffer);
         dataBuffer = [];
-    }, 300000);
+    }, 10000);
 };
 
 // Function to handle incoming MQTT messages
@@ -98,6 +100,7 @@ const handleIncomingMqttData = (mqttMessage) => {
     const timestamp = Date.now(); // Get the current timestamp
     messageData.createdAt = timestamp; // Add the createdAt field with the current timestamp
     dataBuffer.push(messageData);
+    console.log(messageData);
 };
 
 // Call startCollectingMqttData to begin the process
@@ -107,8 +110,14 @@ startCollectingMqttData();
 const uploadDataToFirestore = async (data) => {
     const collectionRef = admin.firestore().collection("mqttData");
     try {
-        await collectionRef.add(data); // Add the data to Firestore
-        console.log("Data uploaded to Firestore:", data);
+        // Add timestamp to the data object
+        const dataWithTimestamp = {
+            ...data,
+            createdAt: Date.now() // Add current timestamp in milliseconds
+        };
+        
+        await collectionRef.add(dataWithTimestamp);
+        console.log("Data uploaded to Firestore:", dataWithTimestamp);
     } catch (error) {
         console.error("Error uploading data to Firestore:", error);
     }
@@ -127,6 +136,7 @@ const uploadSampleData = async () => {
             for (const item of data) {
                 // Add createdAt timestamp to each item
                 item.createdAt = Date.now(); // Set the current timestamp
+                dataBuffer.push(item); // Add to dataBuffer
                 await uploadDataToFirestore(item); // Upload the item with the timestamp
             }
         } catch (parseError) {
